@@ -4,7 +4,7 @@ import clientPromise from "@/lib/mongo";
 export default async function handler(req, res) {
   try {
     const client = await clientPromise;
-    const db = client.db("hookvault-db"); // Defaults to database in your URI
+    const db = client.db("hookvault-db");
     const rawData = await db.collection("hookvault").find({}).toArray();
 
     const data = rawData.map(
@@ -12,13 +12,14 @@ export default async function handler(req, res) {
         category,
         subcategory,
         hook,
-        generated_at: generated_at,
+        generated_at,
       })
     );
-    console.log("data: ", data);
 
+    console.log("✅ Data fetched:", data.length);
     res.status(200).json(data);
   } catch (e) {
+    console.error("❌ API error:", e); // <--- key debug log
     res.status(500).json({ error: e.message });
   }
 }
